@@ -36,7 +36,7 @@ export XAP_OPTIONS="-Djava.util.logging.config.file=${XAP_LOGS_CONFIG_FILE} -Dja
 export EXT_LD_LIBRARY_PATH=${EXT_LD_LIBRARY_PATH=}
 
 if [ -z "${JAVA_OPTIONS}" ]; then
-   JAVA_OPTIONS=`${JAVACMD} -cp "${XAP_HOME}/lib/required/xap-datagrid.jar" com.gigaspaces.internal.utils.OutputJVMOptions`
+   JAVA_OPTIONS=`${JAVACMD} --illegal-access=permit -cp "${XAP_HOME}/lib/required/xap-datagrid.jar" com.gigaspaces.internal.utils.OutputJVMOptions`
    JAVA_OPTIONS="${JAVA_OPTIONS} ${EXT_JAVA_OPTIONS}"
 fi
 export JAVA_OPTIONS
