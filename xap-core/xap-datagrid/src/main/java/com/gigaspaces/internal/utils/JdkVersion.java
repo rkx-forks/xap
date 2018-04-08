@@ -182,7 +182,7 @@ public abstract class JdkVersion {
      * @see #getMajorJavaVersion()
      * @see #JAVA_9
      */
-    public static boolean isAtLeastJava19() {
+    public static boolean isAtLeastJava9() {
         return getMajorJavaVersion() >= JAVA_9;
     }
 
