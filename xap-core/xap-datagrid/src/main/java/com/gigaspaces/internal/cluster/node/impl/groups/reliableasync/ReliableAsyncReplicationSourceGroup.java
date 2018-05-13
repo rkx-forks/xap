@@ -457,10 +457,10 @@ public class ReliableAsyncReplicationSourceGroup
                 createReplicationChannels();
             prepareChannelsArrays();
             spawnAsyncCompletionNotifier();
+            registerWith(metricRegistrator);
             // This will flush local memory (_active is volatile)
             _passive = false;
             _active = true;
-            registerWith(metricRegistrator);
         }
     }
 
