@@ -102,8 +102,8 @@ public class StandaloneProcessingUnitContainer extends ApplicationContextProcess
      */
     public static void main(String[] args) throws Exception {
 
-        if (JdkVersion.isAtLeastJava9()) {
-            ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
+        ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
+        if (! (currentClassLoader instanceof URLClassLoader)) {
             URLClassLoader urlClassLoader = new URLClassLoader(new URL[0], currentClassLoader);
             Thread.currentThread().setContextClassLoader(urlClassLoader);
         }
