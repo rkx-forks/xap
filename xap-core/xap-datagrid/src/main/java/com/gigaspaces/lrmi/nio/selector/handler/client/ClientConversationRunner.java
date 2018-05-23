@@ -37,7 +37,7 @@ import java.util.logging.Logger;
 @com.gigaspaces.api.InternalApi
 public class ClientConversationRunner implements Runnable {
     private static final Logger logger = Logger.getLogger(Constants.LOGGER_LRMI);
-    private static final long SELECT_TIMEOUT = 10 * 1000;
+    private static final long SELECT_TIMEOUT = Long.getLong("com.gs.lrmi.nio.selector.select-timeout", 500L);
 
     private final Selector selector;
     final private Queue<Conversation> registrationConversations = new ConcurrentLinkedQueue<Conversation>();
@@ -99,6 +99,10 @@ public class ClientConversationRunner implements Runnable {
             try {
                 conversation.channel().register(selector, SelectionKey.OP_CONNECT, conversation);
             } catch (Throwable t) {
+                SelectionKey key = conversation.channel().keyFor(selector);
+                if (key != null) {
+                    key.cancel(); //key may not be cancelled if socket.close() throws an exception.
+                }
                 conversation.close(t);
             } finally {
                 iterator.remove();

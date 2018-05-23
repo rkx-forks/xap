@@ -71,11 +71,16 @@ public class LRMIChat extends AbstractChat<ByteBuffer> {
             return false;
         }
         if (mode == Mode.WRITE) {
-            if (write(key, msg)) {
+            final byte writeResult = write(key, msg);
+            if (writeResult == 1) {
                 mode = Mode.HEADER;
                 addInterest(key, SelectionKey.OP_READ);
             }
-            return false;
+            //return false if writeResult == 0
+            //return true  if writeResult == 1
+            //return true  if writeResult == -1 to ensure that the Chat is
+            // closed if the write command got an error and swallowed the exception
+            return (0 != writeResult);
         } else {
             return read(key);
         }
@@ -93,7 +98,12 @@ public class LRMIChat extends AbstractChat<ByteBuffer> {
         SocketChannel channel = (SocketChannel) key.channel();
         if (mode == Mode.HEADER) {
             try {
-                channel.read(headerBuffer);
+                if (0 > channel.read(headerBuffer)) {
+                    //error handling for EOF on read
+                    key.cancel(); //cancel key before call to socket.close()
+                    conversation.close(new IOException("Channel: EOF; mode=HEADER"));
+                    return true; //done with chat
+                }
             } catch (Throwable t) {
                 conversation.close(t);
                 return true;
@@ -109,7 +119,12 @@ public class LRMIChat extends AbstractChat<ByteBuffer> {
         }
         if (mode == Mode.READ) {
             try {
-                channel.read(readBuf);
+                if (0 > channel.read(readBuf)) {
+                    //error handling for EOF on read
+                    key.cancel(); //cancel key before call to socket.close()
+                    conversation.close(new IOException("Channel: EOF; mode=READ"));
+                    return true; //done with chat
+                }
             } catch (Throwable t) {
                 conversation.close(t);
                 return true;

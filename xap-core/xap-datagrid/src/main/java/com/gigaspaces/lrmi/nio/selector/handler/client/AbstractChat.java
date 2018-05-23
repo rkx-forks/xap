@@ -58,20 +58,23 @@ public abstract class AbstractChat<T> {
         }
     }
 
-    public boolean write(SelectionKey key, ByteBuffer msg) {
+    public byte write(SelectionKey key, ByteBuffer msg) {
         SocketChannel channel = (SocketChannel) key.channel();
         try {
             channel.write(msg);
         } catch (Throwable t) {
+            //ensure that the key is cancelled after the write failure
+            //key may not be cancelled if conversation.close() swallows exception.
+            key.cancel();
             conversation.close(t);
-            return true;
+            return -1; //close chat, write error
         }
         if (msg.remaining() == 0) {
             removeInterest(key, SelectionKey.OP_WRITE);
-            return true;
+            return 1; //close chat
         } else {
             addInterest(key, SelectionKey.OP_WRITE);
-            return false;
+            return 0; //keep chat open
         }
     }
 }
