@@ -72,15 +72,13 @@ public class LRMIChat extends AbstractChat<ByteBuffer> {
         }
         if (mode == Mode.WRITE) {
             final byte writeResult = write(key, msg);
-            if (writeResult == 1) {
+            if (1 == writeResult) {
                 mode = Mode.HEADER;
                 addInterest(key, SelectionKey.OP_READ);
+            } else if (-1 == writeResult) {
+                return true; //write error, end chat
             }
-            //return false if writeResult == 0
-            //return true  if writeResult == 1
-            //return true  if writeResult == -1 to ensure that the Chat is
-            // closed if the write command got an error and swallowed the exception
-            return (0 != writeResult);
+            return false;
         } else {
             return read(key);
         }

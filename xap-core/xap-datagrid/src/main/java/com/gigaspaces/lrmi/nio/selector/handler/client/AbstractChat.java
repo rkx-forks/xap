@@ -71,7 +71,7 @@ public abstract class AbstractChat<T> {
         }
         if (msg.remaining() == 0) {
             removeInterest(key, SelectionKey.OP_WRITE);
-            return 1; //close chat
+            return 1; //done with write
         } else {
             addInterest(key, SelectionKey.OP_WRITE);
             return 0; //keep chat open
