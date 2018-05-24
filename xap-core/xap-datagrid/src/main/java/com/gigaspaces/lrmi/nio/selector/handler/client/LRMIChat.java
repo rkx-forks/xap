@@ -97,8 +97,7 @@ public class LRMIChat extends AbstractChat<ByteBuffer> {
         if (mode == Mode.HEADER) {
             try {
                 if (0 > channel.read(headerBuffer)) {
-                    //error handling for EOF on read
-                    key.cancel(); //cancel key before call to socket.close()
+//                    //error handling for EOF on read
                     conversation.close(new IOException("Channel: EOF; mode=HEADER"));
                     return true; //done with chat
                 }
@@ -118,8 +117,7 @@ public class LRMIChat extends AbstractChat<ByteBuffer> {
         if (mode == Mode.READ) {
             try {
                 if (0 > channel.read(readBuf)) {
-                    //error handling for EOF on read
-                    key.cancel(); //cancel key before call to socket.close()
+//                    //error handling for EOF on read
                     conversation.close(new IOException("Channel: EOF; mode=READ"));
                     return true; //done with chat
                 }

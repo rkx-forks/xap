@@ -63,9 +63,6 @@ public abstract class AbstractChat<T> {
         try {
             channel.write(msg);
         } catch (Throwable t) {
-            //ensure that the key is cancelled after the write failure
-            //key may not be cancelled if conversation.close() swallows exception.
-            key.cancel();
             conversation.close(t);
             return -1; //close chat, write error
         }
