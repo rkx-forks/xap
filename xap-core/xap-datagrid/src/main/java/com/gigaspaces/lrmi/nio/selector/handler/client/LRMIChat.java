@@ -21,6 +21,7 @@ import com.gigaspaces.internal.io.MarshalOutputStream;
 import com.gigaspaces.logger.Constants;
 import com.gigaspaces.lrmi.nio.RequestPacket;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -97,8 +98,7 @@ public class LRMIChat extends AbstractChat<ByteBuffer> {
         if (mode == Mode.HEADER) {
             try {
                 if (0 > channel.read(headerBuffer)) {
-//                    //error handling for EOF on read
-                    conversation.close(new IOException("Channel: EOF; mode=HEADER"));
+                    conversation.close(new EOFException("end of stream has been reached unexpectedly during read of header"));
                     return true; //done with chat
                 }
             } catch (Throwable t) {
@@ -117,8 +117,7 @@ public class LRMIChat extends AbstractChat<ByteBuffer> {
         if (mode == Mode.READ) {
             try {
                 if (0 > channel.read(readBuf)) {
-//                    //error handling for EOF on read
-                    conversation.close(new IOException("Channel: EOF; mode=READ"));
+                    conversation.close(new EOFException("end of stream has been reached unexpectedly during input"));
                     return true; //done with chat
                 }
             } catch (Throwable t) {
