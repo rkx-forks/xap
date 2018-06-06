@@ -99,6 +99,11 @@ public class ClientConversationRunner implements Runnable {
             try {
                 conversation.channel().register(selector, SelectionKey.OP_CONNECT, conversation);
             } catch (Throwable t) {
+                //find key and cancel it
+                SelectionKey key = conversation.channel().keyFor(selector);
+                if (key != null) {
+                    key.cancel(); //ensure key is cancelled on the selector before socket.close()
+                }
                 conversation.close(t);
             } finally {
                 iterator.remove();

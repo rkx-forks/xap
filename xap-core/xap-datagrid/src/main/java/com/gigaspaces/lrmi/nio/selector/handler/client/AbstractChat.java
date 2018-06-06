@@ -63,6 +63,7 @@ public abstract class AbstractChat<T> {
         try {
             channel.write(msg);
         } catch (Throwable t) {
+            key.cancel(); //ensure key is cancelled on the selector before socket.close()
             conversation.close(t);
             return -1; //close chat, write error
         }

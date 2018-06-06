@@ -73,13 +73,14 @@ public class LRMIChat extends AbstractChat<ByteBuffer> {
         }
         if (mode == Mode.WRITE) {
             final byte writeResult = write(key, msg);
-            if (1 == writeResult) {
+            if (-1 == writeResult) {
+                return true; //write error, end chat
+            } else if (1 == writeResult) {
+                //done with write, switch to read
                 mode = Mode.HEADER;
                 addInterest(key, SelectionKey.OP_READ);
-            } else if (-1 == writeResult) {
-                return true; //write error, end chat
             }
-            return false;
+            return false; //don't end chat
         } else {
             return read(key);
         }
@@ -98,10 +99,12 @@ public class LRMIChat extends AbstractChat<ByteBuffer> {
         if (mode == Mode.HEADER) {
             try {
                 if (0 > channel.read(headerBuffer)) {
+                    key.cancel(); //ensure key is cancelled on the selector before socket.close()
                     conversation.close(new EOFException("end of stream has been reached unexpectedly during read of header"));
                     return true; //done with chat
                 }
             } catch (Throwable t) {
+                key.cancel(); //ensure key is cancelled on the selector before socket.close()
                 conversation.close(t);
                 return true;
             }
@@ -117,10 +120,12 @@ public class LRMIChat extends AbstractChat<ByteBuffer> {
         if (mode == Mode.READ) {
             try {
                 if (0 > channel.read(readBuf)) {
+                    key.cancel(); //ensure key is cancelled on the selector before socket.close()
                     conversation.close(new EOFException("end of stream has been reached unexpectedly during input"));
                     return true; //done with chat
                 }
             } catch (Throwable t) {
+                key.cancel(); //ensure key is cancelled on the selector before socket.close()
                 conversation.close(t);
                 return true;
             }
