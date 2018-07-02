@@ -32,9 +32,9 @@ public class ReadByIdWithPropertyAddedLaterCassandraTest extends AbstractCassand
     private final TestPojo2 keyValue = new TestPojo2("dank",
             13);
     private final String someProp = "some_prop";
-    private final boolean somePropValue = true;
+    private final Boolean somePropValue = true;
     private final String newProp = "new_prop";
-    private final int newPropValue = 2;
+    private final Integer newPropValue = 2;
     private final String typeName = "TypeName";
     private IntroduceTypeData introduceDataType;
 
@@ -58,7 +58,7 @@ public class ReadByIdWithPropertyAddedLaterCassandraTest extends AbstractCassand
         Assert.assertNotNull("No object found", doc);
         Assert.assertEquals("Wrong type name", typeName, doc.getTypeName());
         Assert.assertEquals("Wrong value", keyValue, doc.getProperty(keyName));
-        Assert.assertEquals("Wrong value", somePropValue, (boolean) doc.getProperty(someProp));
+        Assert.assertEquals("Wrong value", somePropValue, doc.getProperty(someProp));
 
         builder.clear().write(createSpaceDocument().setProperty(newProp, newPropValue), keyName);
         _syncInterceptor.onOperationsBatchSynchronization(builder.build());
@@ -69,8 +69,8 @@ public class ReadByIdWithPropertyAddedLaterCassandraTest extends AbstractCassand
         Assert.assertNotNull("No object found", doc);
         Assert.assertEquals("Wrong type name", typeName, doc.getTypeName());
         Assert.assertEquals("Wrong value", keyValue, doc.getProperty(keyName));
-        Assert.assertEquals("Wrong value", somePropValue, (boolean) doc.getProperty(someProp));
-        Assert.assertEquals("Wrong value", newPropValue, (int) doc.getProperty(newProp));
+        Assert.assertEquals("Wrong value", somePropValue, doc.getProperty(someProp));
+        Assert.assertEquals("Wrong value", newPropValue, doc.getProperty(newProp));
     }
 
     private SpaceDocument createSpaceDocument() {

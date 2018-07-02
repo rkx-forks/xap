@@ -37,7 +37,7 @@ public class ReadByIdsCassandraTest extends AbstractCassandraTest {
     private final String keyName = "key";
     private final AtomicInteger keyValues = new AtomicInteger(0);
     private final String someProp = "some_prop";
-    private final boolean somePropValue = true;
+    private final Boolean somePropValue = true;
     private final String typeName = "TypeName";
     private IntroduceTypeData introduceDataType;
 
@@ -87,10 +87,10 @@ public class ReadByIdsCassandraTest extends AbstractCassandraTest {
         Assert.assertNotNull("got: " + results, doc1);
         Assert.assertNotNull("got: " + results, doc2);
 
-        Assert.assertEquals("bad document", 1, (AtomicInteger) doc1.getProperty(keyName));
-        Assert.assertEquals("bad document", 2, (AtomicInteger) doc2.getProperty(keyName));
-        Assert.assertEquals("bad document", somePropValue, (boolean) doc1.getProperty(someProp));
-        Assert.assertEquals("bad document", somePropValue, (boolean) doc2.getProperty(someProp));
+        Assert.assertEquals("bad document", Integer.valueOf(1), doc1.getProperty(keyName));
+        Assert.assertEquals("bad document", Integer.valueOf(2), doc2.getProperty(keyName));
+        Assert.assertEquals("bad document", somePropValue, doc1.getProperty(someProp));
+        Assert.assertEquals("bad document", somePropValue, doc2.getProperty(someProp));
 
 
     }
